@@ -42,8 +42,5 @@
     //"react-jsxdev": React 17+の開発時の自動JSXランタイムに対応した設定です。開発モードでの使用を想定しています。
     //"react-native": React Native用のJSX変換設定です。
     "jsx": "react-jsx"
-  },
-  "include": [
-    "src"
-  ]
+  }
 }
