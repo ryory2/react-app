@@ -1,64 +1,57 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { TextField, Button, Container, Typography } from '@mui/material';
+import React from 'react';
+import { Button, TextField, Link, Container, Box, Typography } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
-const Register2: React.FC = () => {
-  const [mail, setMail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ mail?: string; password?: string }>({});
-
-  const handleRegister = async () => {
-    try {
-      const response = await axios.post('/register', { mail, password });
-      if (response.status === 200) {
-        const token = response.data.token;
-        // JWTトークンを適切に保存（例: localStorage）
-        localStorage.setItem('jwtToken', token);
-        // 成功時の画面遷移
-        window.location.href = '/success'; // 適切な成功画面に遷移
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        if (error.response.status === 400) {
-          // 400エラーの場合、各項目の下にエラーメッセージを表示
-          setErrors(error.response.data.errors);
-        } else {
-          // その他のエラー処理
-          console.error('Unexpected error:', error.response.data);
-        }
-      }
-    }
-  };
-
-  return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Register
-      </Typography>
-      <TextField
-        label="Mail"
-        value={mail}
-        onChange={(e) => setMail(e.target.value)}
-        error={Boolean(errors.mail)}
-        helperText={errors.mail}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        error={Boolean(errors.password)}
-        helperText={errors.password}
-        fullWidth
-        margin="normal"
-      />
-      <Button variant="contained" color="primary" onClick={handleRegister}>
-        Register
-      </Button>
-    </Container>
-  );
+const Login2: React.FC = () => {
+    return (
+        <Container component="main" maxWidth="xs">
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <Typography component="h1" variant="h5">
+                    ログイン
+                </Typography>
+                <Box component="form" noValidate sx={{ mt: 1 }}>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="メールアドレス"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="パスワード"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        ログイン
+                    </Button>
+                    <Link component={RouterLink} to="/register2" variant="body2">
+                        アカウント登録はこちら
+                    </Link>
+                </Box>
+            </Box>
+        </Container>
+    );
 };
 
-export default Register2;
+export default Login2;
