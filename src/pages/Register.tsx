@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Button, TextField, Link, Container, Box, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Register2: React.FC = () => {
+const Register: React.FC = () => {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<{ mail?: string; password?: string }>({});
@@ -16,7 +16,7 @@ const Register2: React.FC = () => {
                 // JWTトークンを適切に保存（例: localStorage）
                 localStorage.setItem('jwtToken', token);
                 // 成功時の画面遷移
-                window.location.href = '/success'; // 適切な成功画面に遷移
+                window.location.href = '/home'; // 適切な成功画面に遷移
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -78,7 +78,7 @@ const Register2: React.FC = () => {
                     >
                         登録
                     </Button>
-                    <Link component={RouterLink} to="/login2" variant="body2">
+                    <Link component={RouterLink} to="/login" variant="body2">
                         ログインはこちら
                     </Link>
                 </Box>
@@ -87,4 +87,4 @@ const Register2: React.FC = () => {
     );
 };
 
-export default Register2;
+export default Register;

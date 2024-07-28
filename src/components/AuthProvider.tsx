@@ -1,6 +1,10 @@
 import axios from 'axios';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+
+// 使ってないけどメモ書きとして使っている
+
+
 // ■■ 概要
 // Reactのコンテキスト（Context）は、コンポーネント間でデータを共有するための仕組みです。
 // これにより、複数のコンポーネントにまたがるデータを一元管理できます。
@@ -52,7 +56,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProviderコンポーネントを作成し、認証状態を管理
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // React.FC<{ children: ReactNode }>：このコンポーネントが子コンポーネントを受け取ることを示します。
+    // `export const コンポーネント名: React.FC<{ 変数: 変数の型 }> = ({ 本コンポーネントで利用する際の変数名 }) => { ... }`
+
+    // ■■export
+    // 概要: `export`は、モジュールからコードを他のファイルで使えるようにするためのキーワードです。
+    // 猿でもわかるくらい簡単な言葉で説明: これを使うと、他のファイルでこのコードを使えるようになります。
+    // javaで例えると: Javaの`public`キーワードと`import`文に似ています。
+    // 使い方の例: `export const ＜コンポーネント名＞ = () => { ... };`
+    // どのタイミングで利用されるか: コードを他のファイルやモジュールに公開したいときです。
+
+    // ■■React.FC<{ children: ReactNode }>
+    // 概要: `React.FC`は、Functional Componentの型を指定するためのTypeScriptの型定義です。
+    // 猿でもわかるくらい簡単な言葉で説明: これは「関数型コンポーネント」の特別なタイプです。
+    // javaで例えると: Javaのインターフェースのようなものです。
+    // 目的: TypeScriptでコンポーネントの型を指定するためです。
+    // 使い方の例: `const MyComponent: React.FC<{ children: ReactNode }> = ({ children }) => { ... }`
+    // どのタイミングで利用されるか: TypeScriptでReactコンポーネントを定義するときです。
+
+    // ■■({ children })
+    // 概要: これは、コンポーネントが受け取るpropsを分解するための構文です。
+    // 猿でもわかるくらい簡単な言葉で説明: コンポーネントがもらうデータを取り出す方法です。
+    // javaで例えると: Javaのメソッド引数のようなものです。
+    // 目的: コンポーネントに渡されたデータを使いやすくするためです。
+    // 使い方の例: `const MyComponent = ({ children }) => { ... }`
+    // どのタイミングで利用されるか: コンポーネントがpropsを受け取るときです。
+    // どこに利用されるか: 任意のReactコンポーネントで使用されます。
+
+    // 「」    // React.FC<{ children: ReactNode }>：このコンポーネントが子コンポーネントを受け取ることを示します。
     // コンポーネントをエクスポートします。
 
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('token'));
@@ -110,13 +140,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const baseURL = process.env.REACT_APP_API_URL;
 
         if (token) {
-            axios.post('/api/validateToken', { token })
+            axios.post('/api/v1/auth/jwt', {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
                 // 役割：トークンの有効性をサーバーに確認するリクエストを送信
                 // 目的：トークンが有効かどうかを確認するため
 
                 .then(response => {
                     // 役割：サーバーのレスポンスを処理
-                    if (response.data.valid) {
+                    if (response.status === 204) {
                         login(token);
                         // 役割：トークンが有効ならログイン処理を実行
                     } else {
@@ -134,9 +169,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // 目的：初期化処理としてトークンの有効性を確認するため
 
     return (
+        // AuthContext.ProviderはReactコンテキスト
+        // アプリ全体で一つのインスタンス（ここでは認証情報）を共有する
+        // 「value={{ isAuthenticated, login, logout }}」は「AuthContext.Provider」に渡す値
+
+        // 役割：子コンポーネントをラップして認証状態を提供
         <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
             {children}
-            // 役割：子コンポーネントをラップして認証状態を提供
         </AuthContext.Provider>
     );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, TextField, Link, Container, Box, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
-const Login2: React.FC = () => {
+const Login: React.FC = () => {
     return (
         <Container component="main" maxWidth="xs">
             <Box
@@ -45,7 +45,7 @@ const Login2: React.FC = () => {
                     >
                         ログイン
                     </Button>
-                    <Link component={RouterLink} to="/register2" variant="body2">
+                    <Link component={RouterLink} to="/register" variant="body2">
                         アカウント登録はこちら
                     </Link>
                 </Box>
@@ -54,4 +54,4 @@ const Login2: React.FC = () => {
     );
 };
 
-export default Login2;
+export default Login;
