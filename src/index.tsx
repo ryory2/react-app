@@ -4,13 +4,24 @@ import './assets/styles/reset.css'; // ここでCSSリセットをインポー�
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
+import '@fontsource/noto-sans-jp';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Noto Sans JP, sans-serif',
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
 
