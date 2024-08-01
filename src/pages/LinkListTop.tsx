@@ -31,6 +31,11 @@ const LinkListTop: React.FC = () => {
               トップ画面はこちら
             </Link>
           </ListItem>
+          <ListItem>
+            <Link component={RouterLink} to="/color" variant="body2">
+              カラーページ
+            </Link>
+          </ListItem>
         </List>
       </Box>
     </Container>

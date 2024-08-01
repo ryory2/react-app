@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
       }}
     >
       <Typography variant="body2" color="textSecondary" align="center">
-        {'© My App '}
+        {'© デンタル履歴.com '}
         {new Date().getFullYear()}
       </Typography>
     </Box>

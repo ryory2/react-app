@@ -55,6 +55,7 @@ const Login: React.FC = () => {
                 <Box component="form" noValidate sx={{ mt: 1 }}>
                     <TextField
                         margin="normal"
+                        //todo 必須時の「*」を「(必須)」とかにしたい→できない
                         required
                         fullWidth
                         id="mail"
