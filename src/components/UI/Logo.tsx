@@ -1,10 +1,22 @@
 import React from 'react';
 import { Typography, Box, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { mediaQuery, useMediaQuery } from '../../hooks/useMediaQuery'
 
+// export const Component = () => {
+//   const isSp = useMediaQuery(mediaQuery.sp)
+
+//   if (isSp) {
+//     return <SpComponent />
+//   }
+
+//   return <PcComponent />
+// }
 const Logo: React.FC = () => {
-    return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    const isSp = useMediaQuery(mediaQuery.sp)
+
+    if (isSp) {
+        return (<Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link component={RouterLink} to="/" variant="body2" sx={{ textDecoration: 'none' }}>
                 <Typography
                     variant="h6"
@@ -19,8 +31,25 @@ const Logo: React.FC = () => {
                     歯医者の履歴.com
                 </Typography>
             </Link>
-        </Box >
-    );
+        </Box >)
+    }
+
+    return (<Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Link component={RouterLink} to="/" variant="body2" sx={{ textDecoration: 'none' }}>
+            <Typography
+                variant="h5"
+                sx={{
+                    fontFamily: "'Kosugi Maru', Arial, sans-serif",
+                    fontWeight: 'bold',
+                    color: '#E50914',
+                    // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
+                    flexGrow: 1
+                }}
+            >
+                歯医者の履歴.com
+            </Typography>
+        </Link>
+    </Box >)
 };
 
 export default Logo;

@@ -25,14 +25,14 @@ const Header: React.FC = () => {
     <Box sx={{ flexGrow: 1 }}>
       <WhiteAppBar position="static">
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
           >
-          </IconButton>
+          </IconButton> */}
           {/* <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             デンタル履歴.com
           </Typography> */}

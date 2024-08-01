@@ -8,14 +8,14 @@ const Footer: React.FC = () => {
     <Box
       component="footer"
       sx={{
-        py: 2,
+        py: 1,
         px: 2,
         mt: 'auto',
         backgroundColor: (theme) => theme.palette.grey[200],
       }}
     >
-      <Typography variant="body2" color="textSecondary" align="center">
-        {'© デンタル履歴.com '}
+      <Typography sx={{ fontSize: '10px' }} variant="body2" color="textSecondary" align="center">
+        {'© 歯医者の履歴.com '}
         {new Date().getFullYear()}
       </Typography>
     </Box>
