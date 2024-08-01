@@ -9,8 +9,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import ColorPage from './pages/TestColorPage';
 import { AuthProvider } from './components/AuthProvider';
 import AuthGuard from './components/AuthGuard';
+import TestColorPage from './pages/TestColorPage';
 
 const App: React.FC = () => {
     return (
@@ -41,6 +43,8 @@ const App: React.FC = () => {
                                     // 検証が成功した場合（トークンが有効である場合）、AuthGuardコンポーネントはchildrenプロパティとして渡された子コンポーネント（HomePage）をレンダリングします。
                                     // 検証が失敗した場合、またはエラーが発生した場合、ユーザーはログインページにリダイレクトされます。
                                 } />
+                            {/* デバッグ用 */}
+                            <Route path="/color" element={<TestColorPage />} />
                         </Routes>
                     </Box>
                     <Footer />
