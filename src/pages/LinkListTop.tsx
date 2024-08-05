@@ -5,7 +5,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 const LinkListTop: React.FC = () => {
   return (
-    <Container maxWidth="sm">
+    <Box>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Home Page
@@ -36,9 +36,14 @@ const LinkListTop: React.FC = () => {
               カラーページ
             </Link>
           </ListItem>
+          <ListItem>
+            <Link component={RouterLink} to="/otp-check" variant="body2">
+              ワンタイムパスワード入力画面
+            </Link>
+          </ListItem>
         </List>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

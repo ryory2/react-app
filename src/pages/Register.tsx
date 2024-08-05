@@ -1,22 +1,40 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, TextField, Link, Container, Box, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Button, TextField, Link, Container, Box, Typography, FormHelperText } from '@mui/material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const Register: React.FC = () => {
+    const navigate = useNavigate();
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState<{ mail?: string; password?: string }>({});
+    const [errors, setErrors] = useState<{ mail?: string; password?: string; common?: string }>({});
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/register', { mail, password });
-            if (response.status === 200) {
-                const token = response.data.token;
+            const response = await axios.post('http://localhost:8080/api/v1/auth/register-validation', { mail, password });
+            if (response.status === 204) {
+                // const token = response.data.token;
                 // JWTトークンを適切に保存（例: localStorage）
-                localStorage.setItem('jwtToken', token);
+                // localStorage.setItem('jwtToken', token);
                 // 成功時の画面遷移
-                window.location.href = '/home'; // 適切な成功画面に遷移
+                // window.location.href = '/otp-check'; // 適切な成功画面に遷移
+                // navigate('/otp-check', { state: { mail } });
+                try {
+                    const response = await axios.post('http://localhost:8080/api/v1/otp/send', { mail });
+                    if (response.status === 200) {
+                        navigate('/otp-check', { state: { mail } });
+                    }
+                } catch (error) {
+                    if (axios.isAxiosError(error) && error.response) {
+                        if (error.response.status === 400) {
+                            // 400エラーの場合、各項目の下にエラーメッセージを表示
+                            setErrors(error.response.data.errors);
+                        } else {
+                            // その他のエラー処理
+                            console.error('Unexpected error:', error.response.data);
+                        }
+                    }
+                }
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -54,7 +72,7 @@ const Register: React.FC = () => {
                         label="メールアドレス"
                         value={mail}
                         onChange={(e) => setMail(e.target.value)}
-                        error={Boolean(errors.mail)}
+                        error={Boolean(errors.mail || errors.common)}
                         helperText={errors.mail}
                     />
                     <TextField
@@ -67,9 +85,10 @@ const Register: React.FC = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        error={Boolean(errors.password)}
+                        error={Boolean(errors.password || errors.common)}
                         helperText={errors.password}
                     />
+                    {errors.common && <FormHelperText error>{errors.common}</FormHelperText>}
                     <Button
                         fullWidth
                         variant="contained"
