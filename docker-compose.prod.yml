@@ -1,0 +1,20 @@
+version: '3.0'
+
+services:
+  react-app:
+    build:
+      # 現在のディレクトリをビルドコンテキストとして使用
+      context: .
+      # Dockerfileもこのディレクトリにあることを前提
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      # ホストマシンの現在のディレクトリ（Reactアプリケーションのプロジェクトディレクトリ）をコンテナ内の/appディレクトリにマウント
+      - /app/node_modules
+    env_file:
+      - .env.prod
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      # Reactアプリケーションがファイルシステムの変更を監視する際に、ポーリングモードを有効
