@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // 環境変数からAPIのベースURLを設定
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+// axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 interface AuthGuardProps {
     children: React.ReactNode;

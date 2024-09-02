@@ -11,8 +11,6 @@ const Register: React.FC = () => {
 
     const handleRegister = async () => {
         try {
-            axios.defaults.baseURL = "aaaaaaaaaa";
-            axios.defaults.baseURL = "bbbbbbbbbb";
             const response = await axios.post('/api/v1/auth/register-validation', { mail, password });
             if (response.status === 204) {
                 // const token = response.data.token;
