@@ -45,6 +45,15 @@ const theme = createTheme({
     // typography: アプリケーション全体のフォントを設定。
     fontFamily: 'Noto Sans JP, sans-serif',
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 752,
+      md: 1280,
+      lg: 1280,
+      xl: 1280,
+    }
+  },
   palette: {
     // palette: カラーパレットを定義し、各色の用途を設定。
     primary: {

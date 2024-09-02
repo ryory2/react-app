@@ -11,7 +11,9 @@ const Register: React.FC = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/auth/register-validation', { mail, password });
+            axios.defaults.baseURL = "aaaaaaaaaa";
+            axios.defaults.baseURL = "bbbbbbbbbb";
+            const response = await axios.post('/api/v1/auth/register-validation', { mail, password });
             if (response.status === 204) {
                 // const token = response.data.token;
                 // JWTトークンを適切に保存（例: localStorage）
@@ -20,9 +22,9 @@ const Register: React.FC = () => {
                 // window.location.href = '/otp-check'; // 適切な成功画面に遷移
                 // navigate('/otp-check', { state: { mail } });
                 try {
-                    const response = await axios.post('http://localhost:8080/api/v1/otp/send', { mail });
+                    const response = await axios.post('/api/v1/otp/send', { mail });
                     if (response.status === 200) {
-                        navigate('/otp-check', { state: { mail } });
+                        navigate('/otp-check', { state: { mail, password } });
                     }
                 } catch (error) {
                     if (axios.isAxiosError(error) && error.response) {
@@ -38,7 +40,7 @@ const Register: React.FC = () => {
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
-                if (error.response.status === 400) {
+                if (error.response.status === 400 || 409) {
                     // 400エラーの場合、各項目の下にエラーメッセージを表示
                     setErrors(error.response.data.errors);
                 } else {

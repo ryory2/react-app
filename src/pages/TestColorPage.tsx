@@ -4,6 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import theme from '../index';
+import { Typography } from '@mui/material';
 
 // const theme = createTheme({
 //     typography: {
@@ -75,6 +76,58 @@ const TestColorPage: React.FC = () => {
             <Button color="primary" variant="outlined" sx={{ ':hover': { bgcolor: theme.palette.action.hover } }}>
                 Hover Outlined Button
             </Button>
+            <Box>
+                <div>
+                    <Typography variant="h1">見出し 1</Typography>
+                    <Typography variant="h2">見出し 2</Typography>
+                    <Typography variant="h3">見出し 3</Typography>
+                    <Typography variant="h4">見出し 4</Typography>
+                    <Typography variant="h5">見出し 5</Typography>
+                    <Typography variant="h6">見出し 6</Typography>
+                </div>
+                <Typography variant="body1">
+                    これはボディ1のテキストです。標準のテキストスタイルに使用されます。
+                </Typography>
+                <Typography variant="body2">
+                    これはボディ2のテキストです。ボディ1より少し小さいテキストスタイルです。
+                </Typography>
+                <Typography variant="caption">
+                    これはキャプションのテキストです。小さいテキストスタイルに使用されます。
+                </Typography>
+                {/* キャプション（Caption）小さいテキストスタイルです。 */}
+                <Typography variant="button">
+                    これはボタンのテキストです。
+                </Typography>
+                {/* ボタンテキスト（Button）ボタン内のテキストに適しています。 */}
+                <Typography variant="h6" color="primary">
+                    プライマリカラーのテキスト
+                </Typography>
+                <Typography variant="h6" sx={{ fontFamily: 'Kosugi Maru, Arial, sans-serif' }}>
+                    カスタムフォントファミリーのテキスト
+                </Typography>
+                <Typography variant="h6" sx={{ fontSize: '2rem' }}>
+                    カスタムフォントサイズのテキスト
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    カスタムフォントウェイトのテキスト
+                </Typography>
+                <Typography variant="h6" sx={{ textDecoration: 'underline' }}>
+                    下線付きのテキスト
+                </Typography>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontFamily: 'Kosugi Maru, Arial, sans-serif',
+                        fontWeight: 'bold',
+                        fontSize: '2rem',
+                        color: '#E50914',
+                        textDecoration: 'underline',
+                    }}
+                >
+                    カスタムスタイルのテキスト
+                </Typography>
+
+            </Box>
         </Box>
         // <ThemeProvider theme={theme}>
         //     <CssBaseline />
@@ -105,6 +158,7 @@ const TestColorPage: React.FC = () => {
         // </Button>
         //     </Box>
         // </ThemeProvider>
+
     );
 };
 

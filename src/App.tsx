@@ -13,6 +13,8 @@ import ColorPage from './pages/TestColorPage';
 import { AuthProvider } from './components/AuthProvider';
 import AuthGuard from './components/AuthGuard';
 import TestColorPage from './pages/TestColorPage';
+import { Container, styled } from '@mui/material';
+import CheckOtp from './pages/CheckOtp';
 
 const App: React.FC = () => {
     return (
@@ -24,28 +26,31 @@ const App: React.FC = () => {
                 <Box display="flex" flexDirection="column" minHeight="100vh">
                     <Header />
                     <Box component="main" flexGrow={1}>
-                        <Routes>
-                            <Route path="/" element={<LinkListTop />} />
-                            {/* <Route path="/login" element={<Login />} /> */}
-                            <Route path="/login" element={<Login />} />
-                            {/* 役割：ログインページへのルートを定義 */}
-                            <Route path="/Register" element={<Register />} />
-                            {/* <Route path="/otp-verification" element={<OtpVerification />} />
+                        <Container maxWidth="lg">
+                            <Routes>
+                                <Route path="/" element={<LinkListTop />} />
+                                {/* <Route path="/login" element={<Login />} /> */}
+                                <Route path="/login" element={<Login />} />
+                                {/* 役割：ログインページへのルートを定義 */}
+                                <Route path="/register" element={<Register />} />
+                                {/* <Route path="/otp-verification" element={<OtpVerification />} />
                             <Route path="/register" element={<Register />} /> */}
-                            <Route
-                                path="/home"
-                                element={ // このパスに対応するコンポーネントを指定
-                                    <AuthGuard> {/* AuthGuardコンポーネントで認証を確認 */}
-                                        <Home /> {/* 認証が必要なホームページのルート設定 */}
-                                    </AuthGuard>
-                                    // AuthGuardコンポーネントがマウントされると、useEffectフックが実行されます。
-                                    // useEffect内で、ローカルストレージからJWTトークンを取得し、それをサーバーに送信して検証します。
-                                    // 検証が成功した場合（トークンが有効である場合）、AuthGuardコンポーネントはchildrenプロパティとして渡された子コンポーネント（HomePage）をレンダリングします。
-                                    // 検証が失敗した場合、またはエラーが発生した場合、ユーザーはログインページにリダイレクトされます。
-                                } />
-                            {/* デバッグ用 */}
-                            <Route path="/color" element={<TestColorPage />} />
-                        </Routes>
+                                <Route path="/otp-check" element={<CheckOtp />} />
+                                <Route
+                                    path="/home"
+                                    element={ // このパスに対応するコンポーネントを指定
+                                        <AuthGuard> {/* AuthGuardコンポーネントで認証を確認 */}
+                                            <Home /> {/* 認証が必要なホームページのルート設定 */}
+                                        </AuthGuard>
+                                        // AuthGuardコンポーネントがマウントされると、useEffectフックが実行されます。
+                                        // useEffect内で、ローカルストレージからJWTトークンを取得し、それをサーバーに送信して検証します。
+                                        // 検証が成功した場合（トークンが有効である場合）、AuthGuardコンポーネントはchildrenプロパティとして渡された子コンポーネント（HomePage）をレンダリングします。
+                                        // 検証が失敗した場合、またはエラーが発生した場合、ユーザーはログインページにリダイレクトされます。
+                                    } />
+                                {/* デバッグ用 */}
+                                <Route path="/color" element={<TestColorPage />} />
+                            </Routes>
+                        </Container>
                     </Box>
                     <Footer />
                 </Box>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, TextField, Link, Container, Box, Typography, FormHelperText } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
+    const navigate = useNavigate();
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<{ mail?: string; password?: string; common?: string }>({});
@@ -17,11 +18,13 @@ const Login: React.FC = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/v1/auth/login', { mail, password });
             if (response.status === 200) {
-                const token = response.data.token;
+                // const token = response.data.token;
                 // JWTトークンを適切に保存（例: localStorage）
-                localStorage.setItem('jwtToken', token);
+                // localStorage.setItem('jwtToken', token);
                 // 成功時の画面遷移
-                window.location.href = '/home'; // 適切な成功画面に遷移
+                // window.location.href = '/home'; // 適切な成功画面に遷移
+                navigate('/otp-check', { state: { mail } });
+                // React Routerを使用してページ遷移を行うための関数
             }
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

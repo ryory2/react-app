@@ -14,6 +14,7 @@ import { mediaQuery, useMediaQuery } from '../../hooks/useMediaQuery'
 // }
 const Logo: React.FC = () => {
     const isSp = useMediaQuery(mediaQuery.sp)
+    const siteTitle = "履歴.com"
 
     if (isSp) {
         return (<Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -23,12 +24,12 @@ const Logo: React.FC = () => {
                     sx={{
                         fontFamily: "'Kosugi Maru', Arial, sans-serif",
                         fontWeight: 'bold',
-                        color: '#E50914',
+                        color: '#3f51b5',
                         // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
                         flexGrow: 1
                     }}
                 >
-                    歯医者の履歴.com
+                    {siteTitle}
                 </Typography>
             </Link>
         </Box >)
@@ -41,12 +42,12 @@ const Logo: React.FC = () => {
                 sx={{
                     fontFamily: "'Kosugi Maru', Arial, sans-serif",
                     fontWeight: 'bold',
-                    color: '#E50914',
+                    color: '#3f51b5',
                     // textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)',
                     flexGrow: 1
                 }}
             >
-                歯医者の履歴.com
+                {siteTitle}
             </Typography>
         </Link>
     </Box >)

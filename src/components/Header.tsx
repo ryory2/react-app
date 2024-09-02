@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 const WhiteAppBar = styled(AppBar)({
   backgroundColor: '#f8f8f8', // 背景色を白に設定
   color: '#000000', // テキストやアイコンの色を黒に設定（必要に応じて変更）
-  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' // シャドウの設定
+  boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', // シャドウの設定
 });
 
 const Header: React.FC = () => {
