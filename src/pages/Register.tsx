@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, TextField, Link, Container, Box, Typography, FormHelperText } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import apiClient from '../api/apiClient';
 
 const Register: React.FC = () => {
     const navigate = useNavigate();
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState<{ mail?: string; password?: string; common?: string }>({});
+    const baseURL = process.env.REACT_APP_API_BASE_URL || 'https://api.example.com';
+    console.log("Base URL:", baseURL);
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post('/api/v1/auth/register-validation', { mail, password });
+            const response = await apiClient.post('/api/v1/auth/register-validation', { mail, password });
             if (response.status === 204) {
                 // const token = response.data.token;
                 // JWTトークンを適切に保存（例: localStorage）
@@ -20,7 +23,7 @@ const Register: React.FC = () => {
                 // window.location.href = '/otp-check'; // 適切な成功画面に遷移
                 // navigate('/otp-check', { state: { mail } });
                 try {
-                    const response = await axios.post('/api/v1/otp/send', { mail });
+                    const response = await apiClient.post('/api/v1/otp/send', { mail });
                     if (response.status === 200) {
                         navigate('/otp-check', { state: { mail, password } });
                     }
@@ -60,7 +63,7 @@ const Register: React.FC = () => {
                 }}
             >
                 <Typography component="h1" variant="h5">
-                    アカウント登録
+                    アカウント登録{baseURL}
                 </Typography>
                 <Box component="form" noValidate sx={{ mt: 1 }}>
                     <TextField
