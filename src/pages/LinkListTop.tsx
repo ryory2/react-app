@@ -2,8 +2,10 @@
 import React from 'react';
 import { Container, Typography, Box, Grid, Link, List, ListItem } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import axios from 'axios';
 
 const LinkListTop: React.FC = () => {
+  const baseURL = process.env.REACT_APP_API_BASE_URL || "取得不可";
   return (
     <Box>
       <Box sx={{ mt: 4 }}>
@@ -40,6 +42,11 @@ const LinkListTop: React.FC = () => {
             <Link component={RouterLink} to="/otp-check" variant="body2">
               ワンタイムパスワード入力画面
             </Link>
+          </ListItem>
+          <ListItem>
+            <p>
+              process.env.REACT_APP_API_BASE_URL：{baseURL}
+            </p>
           </ListItem>
         </List>
       </Box>

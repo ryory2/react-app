@@ -1,6 +1,13 @@
 # ベースイメージとしてNodeを使用してビルドする
 FROM node:18 AS build
 
+# # ビルド引数を取得
+ARG REACT_APP_API_BASE_URL
+
+# # ビルド引数を使って環境変数を設定
+ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+RUN echo "Building for environment: $REACT_APP_API_BASE_URL"
+
 # 作業ディレクトリを作成
 WORKDIR /app
 
