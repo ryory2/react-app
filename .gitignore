@@ -26,4 +26,4 @@ yarn-error.log*
 /.vscode
 
 # その他
-*.bat
+# *.bat
