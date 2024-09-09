@@ -1,0 +1,6 @@
+Execution started at 2024/09/09  8:40:05.15 
+-------------------------------------------------- 
+Batch file directory: C:\dev_springboot\workspace\react-app\ 
+Converted WSL path: /mnt/c/dev_springboot/workspace/react-app/ 
+Execution finished at 2024/09/09  8:40:57.12 
+-------------------------------------------------- 
