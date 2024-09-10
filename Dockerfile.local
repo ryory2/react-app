@@ -1,42 +1,17 @@
-# ベースイメージとしてNodeを使用してビルドする
-FROM node:18 AS build
+# ベースイメージとしてNode.jsを使用
+FROM node:18-alpine
 
-# # ビルド引数を取得
-ARG REACT_APP_API_BASE_URL
-
-# # ビルド引数を使って環境変数を設定
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
-RUN echo "Building for environment: $REACT_APP_API_BASE_URL"
-
-# 作業ディレクトリを作成
+# 作業ディレクトリを設定
 WORKDIR /app
 
-# パッケージの依存関係をコピー
+# package.jsonとpackage-lock.jsonをコピー
 COPY package*.json ./
 
 # 依存関係をインストール
 RUN npm install
 
-# アプリケーションのソースコードをコピー
+# ソースコードをコピー
 COPY . .
 
-# アプリケーションをビルド
-RUN npm run build
-
-# Nginxをベースにして、ビルド結果を配信する
-FROM nginx:alpine
-
-# Nginxのデフォルトの設定ファイルを削除
-RUN rm /etc/nginx/conf.d/default.conf
-
-# 自作のNginx設定ファイルをコピー（後述）
-COPY ./docker/nginx.conf /etc/nginx/conf.d/
-
-# Reactのビルド結果をNginxのルートディレクトリにコピー
-COPY --from=build /app/build /usr/share/nginx/html
-
-# ポート80でリスン
-EXPOSE 80
-
-# Nginxを起動
-CMD ["nginx", "-g", "daemon off;"]
+# アプリケーションを起動
+CMD ["npm", "start"]
