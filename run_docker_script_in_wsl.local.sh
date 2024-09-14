@@ -4,7 +4,7 @@
 set -e
 
 # ログファイルのパスを設定
-LOG_FILE="docker_execution_log_in_linux.local.txt"
+LOG_FILE="docker_execution_log_in_linux.local.log"
 
 # ログファイルが存在する場合は削除
 if [ -f "$LOG_FILE" ]; then

@@ -3,7 +3,7 @@ REM バッチファイルが置かれているディレクトリを取得
 set WSL_DIR=%~dp0
 
 REM ログファイルのパスを指定
-set LOG_FILE=%WSL_DIR%docker_execution_log_in_windows.local.txt
+set LOG_FILE=%WSL_DIR%docker_execution_log_in_windows.local.log
 
 REM ログファイルが存在する場合削除
 if exist "%LOG_FILE%" del "%LOG_FILE%"

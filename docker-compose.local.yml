@@ -12,6 +12,7 @@ services:
         # 「${REACT_APP_API_BASE_URL}」で環境変数の値を取得してビルド時の引数として渡す
         REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
     image: react-local-image:latest
+    container_name: react-container
     ports:
       - "80:80"
     volumes:
