@@ -1,5 +1,6 @@
 # 「tfvars」は「terraform.tfvars」を自動で読み込む。別名を利用する場合、「-var-fileオプション」を利用する。
 # terraform apply -var-file="staging.tfvars"
+
 ###########################################################
 # Terraform Variables File
 # このファイルはTerraformプロジェクト内で使用する変数を定義します。
@@ -10,14 +11,14 @@
 ###########################################################
 
 # AWSリージョンの設定
-aws_region = "ap-northeast-1"
+aws_region = "ap-northeast-1" # 使用するAWSリージョンを東京リージョンに設定
 
 ###########################################################
 # 共通タグ設定
 ###########################################################
 
-common_tags = {
-  Environment = "terraform-test" # 環境を示すタグ
+common_tags = {                  # 全てのリソースに共通して付与するタグの定義
+  Environment = "terraform-test" # 環境を示すタグ（例: テスト環境）
   Owner       = "ore"            # リソースの所有者を示すタグ
 }
 
@@ -25,58 +26,58 @@ common_tags = {
 # リソース名設定
 ###########################################################
 
-vpc_name                         = "terraform-test-vpc"
-internet_gateway_name            = "terraform-test-igw"
-public_subnet_name_1             = "terraform-test-public-subnet-1"
-public_subnet_name_2             = "terraform-test-public-subnet-2"
-availability_zone_1              = "ap-northeast-1a"
-availability_zone_2              = "ap-northeast-1c"
-route_table_name_1               = "terraform-test-public-rt-1"
-route_table_name_2               = "terraform-test-public-rt-2"
-security_group_name              = "terraform-test-alb-sg"
-alb_name                         = "terraform-test-ecs-nginx-alb"
-target_group_name                = "terraform-test-ecs-nginx-tg"
-listener_name                    = "terraform-test-listener"
-iam_role_name_ecs_role           = "terraformEcsTaskRole"
-iam_role_name_ecs_execution_role = "terraformEcsTaskExecutionRole"
-ecs_task_definition_family       = "terraform-test-nginx-task"
-ecs_cluster_name                 = "terraform-test-ecs-cluster"
-ecs_service_name                 = "terraform-test-nginx-service"
+vpc_name                         = "terraform-test-vpc"             # VPCの名前を設定
+internet_gateway_name            = "terraform-test-igw"             # インターネットゲートウェイの名前を設定
+public_subnet_name_1             = "terraform-test-public-subnet-1" # 1つ目のパブリックサブネットの名前を設定
+public_subnet_name_2             = "terraform-test-public-subnet-2" # 2つ目のパブリックサブネットの名前を設定
+availability_zone_1              = "ap-northeast-1a"                # 使用する1つ目のアベイラビリティゾーンを設定
+availability_zone_2              = "ap-northeast-1c"                # 使用する2つ目のアベイラビリティゾーンを設定
+route_table_name_1               = "terraform-test-public-rt-1"     # 1つ目のルートテーブルの名前を設定
+route_table_name_2               = "terraform-test-public-rt-2"     # 2つ目のルートテーブルの名前を設定
+security_group_name              = "terraform-test-alb-sg"          # セキュリティグループの名前を設定
+alb_name                         = "terraform-test-ecs-nginx-alb"   # ALBの名前を設定
+target_group_name                = "terraform-test-ecs-nginx-tg"    # ターゲットグループの名前を設定
+listener_name                    = "terraform-test-listener"        # ALBリスナーの名前を設定
+iam_role_name_ecs_role           = "terraformEcsTaskRole"           # ECSタスク用IAMロールの名前を設定
+iam_role_name_ecs_execution_role = "terraformEcsTaskExecutionRole"  # ECSタスク実行用IAMロールの名前を設定
+ecs_task_definition_family       = "terraform-test-nginx-task"      # ECSタスク定義のファミリー名を設定
+ecs_cluster_name                 = "terraform-test-ecs-cluster"     # ECSクラスターの名前を設定
+ecs_service_name                 = "terraform-test-nginx-service"   # ECSサービスの名前を設定
 
 ###########################################################
 # リソースグループ設定
 ###########################################################
 
-resource_group_name = "terraform-test-resource-group"
+resource_group_name = "terraform-test-resource-group" # リソースグループの名前を設定
 
-resource_group_tags = {
-  Environment = "terraform-test"
+resource_group_tags = {          # リソースグループに含めるタグの条件を設定
+  Environment = "terraform-test" # 環境がterraform-testのリソースを含める
 }
 
 ###########################################################
 # コンテナ定義設定
 ###########################################################
 
-container_definitions = [
+container_definitions = [ # ECSタスクで使用するコンテナの定義
   {
-    name      = "nginx"
-    image     = "nginx:latest"
-    essential = true
-    portMappings = [
+    name      = "nginx"        # コンテナの名前を設定
+    image     = "nginx:latest" # コンテナイメージを設定
+    essential = true           # このコンテナが必須かどうかを設定
+    portMappings = [           # コンテナのポートマッピングを設定
       {
-        containerPort = 80
-        hostPort      = 80
-        protocol      = "tcp"
+        containerPort = 80    # コンテナ内でリッスンするポート
+        hostPort      = 80    # ホスト側のポート
+        protocol      = "tcp" # プロトコルをTCPに設定
       }
     ]
   }
   # 2つ目のコンテナを定義する場合
   # ,
   # {
-  #   name         = "sidecar"
-  #   image        = "busybox"
-  #   essential    = false
-  #   portMappings = []
+  #   name         = "sidecar" # 2つ目のコンテナの名前を設定
+  #   image        = "busybox" # コンテナイメージを設定
+  #   essential    = false # このコンテナが必須かどうかを設定
+  #   portMappings = [] # ポートマッピングを設定（必要に応じて）
   # }
 ]
 
@@ -84,5 +85,5 @@ container_definitions = [
 # ロードバランサー設定
 ###########################################################
 
-lb_container_name = "nginx" # container_definitions.nameと同じにすること
-lb_container_port = 80
+lb_container_name = "nginx" # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
+lb_container_port = 80      # ロードバランサーで使用するコンテナのポート
