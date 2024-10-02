@@ -276,8 +276,8 @@ resource "aws_ecs_service" "nginx_service" {
   # ロードバランサー設定
   load_balancer {
     target_group_arn = aws_lb_target_group.tg.arn # 使用するターゲットグループのARNを指定
-    container_name   = "nginx"                    # タスク内のコンテナ名を指定
-    container_port   = 80                         # コンテナがリッスンするポートを指定
+    container_name   = var.lb_container_name      # タスク内のコンテナ名を指定
+    container_port   = var.lb_container_port      # コンテナがリッスンするポートを指定
   }
 
   tags = merge(var.common_tags, {

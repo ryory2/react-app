@@ -60,3 +60,6 @@ container_definitions = [
   #   portMappings = []
   # }
 ]
+# コンテナ定義ロードバランサー設定
+lb_container_name = "nginx" #container_definitions.nameと同じにすること
+lb_container_port = 80

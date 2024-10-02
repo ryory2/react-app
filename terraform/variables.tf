@@ -168,3 +168,16 @@ variable "container_definitions" {
     }
   ]
 }
+
+# ロードバランサー用のコンテナ名
+variable "lb_container_name" {
+  description = "Load Balancerで使用するコンテナの名前"
+  type        = string
+  default     = "nginx"
+}
+# ロードバランサー用のコンテナポート
+variable "lb_container_port" {
+  description = "Load Balancerで使用するコンテナのポート"
+  type        = number
+  default     = 80
+}
