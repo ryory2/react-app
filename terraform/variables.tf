@@ -139,3 +139,32 @@ variable "resource_group_tags" {
     Environment = "Production"
   }
 }
+
+# コンテナ定義の変数
+variable "container_definitions" {
+  description = "List of container definitions for the ECS task"
+  type = list(object({
+    name      = string
+    image     = string
+    essential = bool
+    portMappings = list(object({
+      containerPort = number
+      hostPort      = number
+      protocol      = string
+    }))
+  }))
+  default = [
+    {
+      name      = "nginx"
+      image     = "nginx:latest"
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+          protocol      = "tcp"
+        }
+      ]
+    }
+  ]
+}

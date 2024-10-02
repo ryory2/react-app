@@ -250,21 +250,8 @@ resource "aws_ecs_task_definition" "nginx_task" {
   memory                   = "512"                                    # タスクに割り当てるメモリ（MiB）
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn # タスク実行ロールのARN
 
-  # コンテナ定義をJSON形式で記述
-  container_definitions = jsonencode([
-    {
-      name      = "nginx"        # コンテナの名前
-      image     = "nginx:latest" # 使用するDockerイメージ
-      essential = true           # コンテナが必須であることを示す
-      portMappings = [           # 正: "portMappings"を使用
-        {
-          containerPort = 80
-          hostPort      = 80
-          protocol      = "tcp"
-        }
-      ]
-    }
-  ])
+  # コンテナ定義を変数から取得
+  container_definitions = jsonencode(var.container_definitions)
 
   tags = merge(var.common_tags, {
     Name = var.ecs_task_definition_family

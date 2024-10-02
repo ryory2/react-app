@@ -36,3 +36,27 @@ resource_group_name = "terraform-test-resource-group"
 resource_group_tags = {
   Environment = "terraform-test"
 }
+
+# コンテナ定義の変数
+container_definitions = [
+  {
+    name      = "nginx"
+    image     = "nginx:latest"
+    essential = true
+    portMappings = [
+      {
+        containerPort = 80
+        hostPort      = 80
+        protocol      = "tcp"
+      }
+    ]
+  }
+  # 2つ目のコンテナを定義する場合
+  # ,
+  # {
+  #   name         = "sidecar"
+  #   image        = "busybox"
+  #   essential    = false
+  #   portMappings = []
+  # }
+]
