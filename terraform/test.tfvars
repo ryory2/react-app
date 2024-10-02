@@ -58,26 +58,37 @@ resource_group_tags = {          # リソースグループに含めるタグの
 # コンテナ定義設定
 ###########################################################
 
-container_definitions = [ # ECSタスクで使用するコンテナの定義
+container_definitions = [
   {
-    name      = "nginx"        # コンテナの名前を設定
-    image     = "nginx:latest" # コンテナイメージを設定
-    essential = true           # このコンテナが必須かどうかを設定
-    portMappings = [           # コンテナのポートマッピングを設定
+    name      = "react-frontend"                                                          # コンテナの名前を設定
+    image     = "990606419933.dkr.ecr.ap-northeast-1.amazonaws.com/react-frontend:latest" # コンテナイメージを設定
+    essential = true                                                                      # このコンテナが必須かどうかを設定
+    portMappings = [                                                                      # コンテナのポートマッピングを設定
       {
         containerPort = 80    # コンテナ内でリッスンするポート
         hostPort      = 80    # ホスト側のポート
         protocol      = "tcp" # プロトコルをTCPに設定
       }
     ]
+    environment = [ # 環境変数を設定
+      {
+        name  = "REACT_APP_SPRING_DATASOURCE_USERNAME" # 環境変数の名前
+        value = "aaaaaaaaaaaaaaaaaaa"                  # 環境変数の値
+      },
+      {
+        name  = "ENV_VAR_2" # 別の環境変数の名前
+        value = "value2"    # 別の環境変数の値
+      }
+    ]
   }
   # 2つ目のコンテナを定義する場合
   # ,
   # {
-  #   name         = "sidecar" # 2つ目のコンテナの名前を設定
-  #   image        = "busybox" # コンテナイメージを設定
-  #   essential    = false # このコンテナが必須かどうかを設定
-  #   portMappings = [] # ポートマッピングを設定（必要に応じて）
+  #   name              = "sidecar" # 2つ目のコンテナの名前を設定
+  #   image             = "busybox" # コンテナイメージを設定
+  #   essential         = false     # このコンテナが必須かどうかを設定
+  #   portMappings      = []        # ポートマッピングを設定（必要に応じて）
+  #   environment       = []        # 環境変数を設定（必要に応じて）
   # }
 ]
 
@@ -85,5 +96,5 @@ container_definitions = [ # ECSタスクで使用するコンテナの定義
 # ロードバランサー設定
 ###########################################################
 
-lb_container_name = "nginx" # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
-lb_container_port = 80      # ロードバランサーで使用するコンテナのポート
+lb_container_name = "react-frontend" # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
+lb_container_port = 80               # ロードバランサーで使用するコンテナのポート

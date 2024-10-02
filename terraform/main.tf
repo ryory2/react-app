@@ -280,7 +280,8 @@ resource "aws_ecs_task_definition" "nginx_task" {
   requires_compatibilities = ["FARGATE"]                              # Fargate互換性を指定
   cpu                      = "256"                                    # タスクに割り当てるCPUユニット
   memory                   = "512"                                    # タスクに割り当てるメモリ（MiB）
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn # タスク実行ロールのARN
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn # タスク実行ロールのARN（ECR からイメージを Pull したり、ログを CloudWatchLogs に記録するために使用）
+  task_role_arn            = aws_iam_role.ecs_task_role.arn           # タスクロールのARN（実行されるコンテナに付与されるロール）
 
   # コンテナ定義を変数から取得
   container_definitions = jsonencode(var.container_definitions)
@@ -301,6 +302,7 @@ resource "aws_ecs_service" "nginx_service" {
   task_definition = aws_ecs_task_definition.nginx_task.arn # 使用するタスク定義のARNを指定
   desired_count   = 1                                      # 起動するタスクの数
   launch_type     = "FARGATE"                              # Fargateランチタイプを指定
+  # force_new_deployment = true                                   # デプロイを強制する場合
 
   # ネットワーク設定
   network_configuration {

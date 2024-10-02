@@ -162,6 +162,10 @@ variable "container_definitions" {
       hostPort      = number
       protocol      = string
     }))
+    environment = optional(list(object({
+      name  = string
+      value = string
+    })), []) # 環境変数をオプションとして追加。デフォルトは空リスト。
   }))
   default = [
     {
@@ -175,6 +179,14 @@ variable "container_definitions" {
           protocol      = "tcp"
         }
       ]
+      environment = [] # デフォルトでは空リスト
+    },
+    {
+      name         = "sidecar"
+      image        = "busybox"
+      essential    = false
+      portMappings = []
+      environment  = [] # デフォルトでは空リスト
     }
   ]
 }

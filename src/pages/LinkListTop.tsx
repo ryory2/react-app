@@ -6,6 +6,8 @@ import axios from 'axios';
 
 const LinkListTop: React.FC = () => {
   const baseURL = process.env.REACT_APP_API_BASE_URL || "取得不可";
+  const springDatasourceUsername = process.env.REACT_APP_SPRING_DATASOURCE_USERNAME || "取得不可";
+
   return (
     <Box>
       <Box sx={{ mt: 4 }}>
@@ -46,6 +48,11 @@ const LinkListTop: React.FC = () => {
           <ListItem>
             <p>
               process.env.REACT_APP_API_BASE_URL：{baseURL}
+            </p>
+          </ListItem>
+          <ListItem>
+            <p>
+              process.env.REACT_APP_SPRING_DATASOURCE_USERNAME：{springDatasourceUsername}
             </p>
           </ListItem>
         </List>
