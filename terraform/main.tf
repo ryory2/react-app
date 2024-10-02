@@ -1,13 +1,21 @@
-# main.tf
+###########################################################
+# Terraform Main Configuration
+# このファイルはTerraformプロジェクトの主要なリソースを定義します。
+###########################################################
 
 # 変数の利用: 各リソースブロック内でvar.<変数名>を使用して、変数を参照
 # 「resource "aws_vpc" "リソース名" {]」リソース名: Terraform内でそのリソースを参照するためのローカル名
+###########################################################
+# プロバイダー設定
+###########################################################
 
-# プロバイダーの設定
-# AWSプロバイダーを指定し、使用するリージョンを設定します。
 provider "aws" {
   region = var.aws_region
 }
+
+###########################################################
+# ネットワークリソース設定
+###########################################################
 
 # VPCの作成
 resource "aws_vpc" "vpc" {
@@ -51,7 +59,7 @@ resource "aws_subnet" "subnet_2" {
   })
 }
 
-# ルートテーブルの作成
+# ルートテーブルの作成（1つ目）
 resource "aws_route_table" "public_rt_1" {
   vpc_id = aws_vpc.vpc.id # 作成したVPCに関連付け
 
@@ -66,7 +74,7 @@ resource "aws_route_table" "public_rt_1" {
   })
 }
 
-# ルートテーブルの作成（既存のものに加えて必要なら追加）
+# ルートテーブルの作成（2つ目）
 resource "aws_route_table" "public_rt_2" {
   vpc_id = aws_vpc.vpc.id # 作成したVPCに関連付け
 
@@ -93,6 +101,10 @@ resource "aws_route_table_association" "public_association_2" {
   route_table_id = aws_route_table.public_rt_2.id # 作成した2つ目のルートテーブルに関連付け
 }
 
+###########################################################
+# ECSクラスター設定
+###########################################################
+
 # ECSクラスターの作成
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = var.ecs_cluster_name # クラスターの名前
@@ -101,6 +113,10 @@ resource "aws_ecs_cluster" "ecs_cluster" {
     Name = var.ecs_cluster_name
   })
 }
+
+###########################################################
+# IAMロール設定
+###########################################################
 
 # IAMロールの作成（タスクロール）
 resource "aws_iam_role" "ecs_task_role" {
@@ -155,6 +171,10 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   })
 }
 
+###########################################################
+# セキュリティグループ設定
+###########################################################
+
 # セキュリティグループの作成（ALB用）
 resource "aws_security_group" "alb_sg" {
   name        = var.security_group_name      # セキュリティグループの名前
@@ -183,6 +203,10 @@ resource "aws_security_group" "alb_sg" {
   })
 }
 
+###########################################################
+# ALB設定
+###########################################################
+
 # Application Load Balancer（ALB）の作成
 resource "aws_lb" "alb" {
   name               = var.alb_name                   # ALBの名前
@@ -202,12 +226,12 @@ resource "aws_lb" "alb" {
 
 # ターゲットグループの作成
 resource "aws_lb_target_group" "tg" {
-  name     = var.target_group_name # ターゲットグループの名前
-  port     = 80                    # ターゲットグループがリッスンするポート
-  protocol = "HTTP"                # プロトコルをHTTPに設定
-  vpc_id   = aws_vpc.vpc.id        # 作成したVPCに関連付け
   # awsvpc ネットワークモードでは、ターゲットグループの target_type を ip に設定する必要がある（タスク定義で指定されているネットワークモードが awsvpc）
-  target_type = "ip" # ターゲットタイプをIPに設定
+  name        = var.target_group_name # ターゲットグループの名前
+  port        = 80                    # ターゲットグループがリッスンするポート
+  protocol    = "HTTP"                # プロトコルをHTTPに設定
+  vpc_id      = aws_vpc.vpc.id        # 作成したVPCに関連付け
+  target_type = "ip"                  # ターゲットタイプをIPに設定
 
   # ヘルスチェックの設定
   health_check {
@@ -223,6 +247,10 @@ resource "aws_lb_target_group" "tg" {
     Name = var.target_group_name
   })
 }
+
+###########################################################
+# ALBリスナー設定
+###########################################################
 
 # ALBリスナーの作成
 resource "aws_lb_listener" "listener" {
@@ -241,6 +269,10 @@ resource "aws_lb_listener" "listener" {
   })
 }
 
+###########################################################
+# ECSタスク定義設定
+###########################################################
+
 # タスク定義の作成
 resource "aws_ecs_task_definition" "nginx_task" {
   family                   = var.ecs_task_definition_family           # タスク定義のファミリー名
@@ -257,6 +289,10 @@ resource "aws_ecs_task_definition" "nginx_task" {
     Name = var.ecs_task_definition_family
   })
 }
+
+###########################################################
+# ECSサービス設定
+###########################################################
 
 # ECSサービスの作成
 resource "aws_ecs_service" "nginx_service" {
@@ -284,6 +320,10 @@ resource "aws_ecs_service" "nginx_service" {
     Name = var.ecs_service_name
   })
 }
+
+###########################################################
+# リソースグループ設定
+###########################################################
 
 # リソースグループの作成
 resource "aws_resourcegroups_group" "resource_group" {

@@ -1,17 +1,30 @@
-# terraform.tfvars
-# 変数を外出しする変数一覧
 # 「tfvars」は「terraform.tfvars」を自動で読み込む。別名を利用する場合、「-var-fileオプション」を利用する。
 # terraform apply -var-file="staging.tfvars"
+###########################################################
+# Terraform Variables File
+# このファイルはTerraformプロジェクト内で使用する変数を定義します。
+###########################################################
 
+###########################################################
+# 一般設定
+###########################################################
+
+# AWSリージョンの設定
 aws_region = "ap-northeast-1"
 
-# 共通タグ
+###########################################################
+# 共通タグ設定
+###########################################################
+
 common_tags = {
-  Environment = "terraform-test"
-  Owner       = "ore"
+  Environment = "terraform-test" # 環境を示すタグ
+  Owner       = "ore"            # リソースの所有者を示すタグ
 }
 
-# 各リソースの名前
+###########################################################
+# リソース名設定
+###########################################################
+
 vpc_name                         = "terraform-test-vpc"
 internet_gateway_name            = "terraform-test-igw"
 public_subnet_name_1             = "terraform-test-public-subnet-1"
@@ -30,14 +43,20 @@ ecs_task_definition_family       = "terraform-test-nginx-task"
 ecs_cluster_name                 = "terraform-test-ecs-cluster"
 ecs_service_name                 = "terraform-test-nginx-service"
 
-# リソースグループの設定
+###########################################################
+# リソースグループ設定
+###########################################################
+
 resource_group_name = "terraform-test-resource-group"
 
 resource_group_tags = {
   Environment = "terraform-test"
 }
 
-# コンテナ定義の変数
+###########################################################
+# コンテナ定義設定
+###########################################################
+
 container_definitions = [
   {
     name      = "nginx"
@@ -60,6 +79,10 @@ container_definitions = [
   #   portMappings = []
   # }
 ]
-# コンテナ定義ロードバランサー設定
-lb_container_name = "nginx" #container_definitions.nameと同じにすること
+
+###########################################################
+# ロードバランサー設定
+###########################################################
+
+lb_container_name = "nginx" # container_definitions.nameと同じにすること
 lb_container_port = 80

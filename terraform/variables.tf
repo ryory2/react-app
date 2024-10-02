@@ -1,7 +1,11 @@
-# variables.tf
-# Terraformプロジェクト内で使用する変数を定義
-# 変数の宣言: 各変数をvariableブロックを用いて宣言
-# 変数の属性設定: description、type、defaultなどの属性を設定し、変数の用途やデフォルト値を設定
+###########################################################
+# Terraform Variables File
+# このファイルはTerraformプロジェクト内で使用する変数を定義します。
+###########################################################
+
+###########################################################
+# 一般設定
+###########################################################
 
 # プロバイダー用のリージョン変数
 variable "aws_region" {
@@ -19,7 +23,10 @@ variable "common_tags" {
   }
 }
 
-# 各リソースの名前を変数化
+###########################################################
+# リソース名設定
+###########################################################
+
 variable "vpc_name" {
   description = "VPCの名前タグ"
   type        = string
@@ -38,21 +45,18 @@ variable "public_subnet_name_1" {
   default     = "terraform-public-subnet-1"
 }
 
-# パブリックサブネットの2つ目
 variable "public_subnet_name_2" {
   description = "パブリックサブネットの2つ目の名前タグ"
   type        = string
   default     = "terraform-public-subnet-2"
 }
 
-# 使用するアベイラビリティゾーンの1つ目
 variable "availability_zone_1" {
   description = "1つ目のアベイラビリティゾーン"
   type        = string
   default     = "ap-northeast-1a"
 }
 
-# 使用するアベイラビリティゾーンの2つ目
 variable "availability_zone_2" {
   description = "2つ目のアベイラビリティゾーン"
   type        = string
@@ -96,13 +100,13 @@ variable "security_group_name" {
 }
 
 variable "iam_role_name_ecs_execution_role" {
-  description = "IAMロール(タスクロール)の名前"
+  description = "IAMロール(タスク実行ロール)の名前"
   type        = string
   default     = "ecsTaskExecutionRole"
 }
 
 variable "iam_role_name_ecs_role" {
-  description = "IAMロール(タスク実行ロール)の名前"
+  description = "IAMロール(タスクロール)の名前"
   type        = string
   default     = "ecsTaskRole"
 }
@@ -125,7 +129,10 @@ variable "ecs_service_name" {
   default     = "nginx-service"
 }
 
-# リソースグループ用の変数
+###########################################################
+# リソースグループ設定
+###########################################################
+
 variable "resource_group_name" {
   description = "リソースグループの名前"
   type        = string
@@ -140,7 +147,10 @@ variable "resource_group_tags" {
   }
 }
 
-# コンテナ定義の変数
+###########################################################
+# コンテナ定義設定
+###########################################################
+
 variable "container_definitions" {
   description = "List of container definitions for the ECS task"
   type = list(object({
@@ -169,12 +179,17 @@ variable "container_definitions" {
   ]
 }
 
+###########################################################
+# ロードバランサー設定
+###########################################################
+
 # ロードバランサー用のコンテナ名
 variable "lb_container_name" {
   description = "Load Balancerで使用するコンテナの名前"
   type        = string
   default     = "nginx"
 }
+
 # ロードバランサー用のコンテナポート
 variable "lb_container_port" {
   description = "Load Balancerで使用するコンテナのポート"
