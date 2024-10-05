@@ -270,6 +270,52 @@ resource "aws_lb_listener" "listener" {
 }
 
 ###########################################################
+# Route 53ホストゾーンの取得
+###########################################################
+
+# Route 53ホストゾーンのリソースを定義します。
+resource "aws_route53_zone" "route53_zone" {
+  name = var.domain_name # 作成するホストゾーンのドメイン名を指定
+
+  # ホストゾーンにタグを付与します。タグはマップ形式で指定。
+  tags = var.common_tags
+}
+
+# Aレコードを作成し、ALBへのエイリアスとして設定
+resource "aws_route53_record" "route53_record" {
+  zone_id = aws_route53_zone.route53_zone.zone_id # 取得したホストゾーンIDを指定
+  name    = var.domain_name                       # Aレコードの名前を変数から指定
+  type    = "A"                                   # レコードタイプをAに設定
+
+  alias {
+    name    = aws_lb.alb.dns_name # ALBのDNS名をエイリアス先として指定
+    zone_id = aws_lb.alb.zone_id  # ALBのゾーンIDを指定
+    # name                   = data.aws_lb.target_alb.dns_name # ALBのDNS名をエイリアス先として指定
+    # zone_id                = data.aws_lb.target_alb.zone_id  # ALBのゾーンIDを指定
+    evaluate_target_health = true # ターゲットのヘルスチェックを有効化
+  }
+}
+
+# ドメインレジストラに自動生成されたネームサーバー名を登録
+resource "aws_route53domains_registered_domain" "registered_domain" {
+  domain_name = var.domain_name
+
+  name_server {
+    name = aws_route53_zone.route53_zone.name_servers[0]
+  }
+  name_server {
+    name = aws_route53_zone.route53_zone.name_servers[1]
+  }
+  name_server {
+    name = aws_route53_zone.route53_zone.name_servers[2]
+  }
+  name_server {
+    name = aws_route53_zone.route53_zone.name_servers[3]
+  }
+  tags = var.common_tags
+}
+
+###########################################################
 # ECSタスク定義設定
 ###########################################################
 

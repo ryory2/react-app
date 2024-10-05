@@ -208,3 +208,12 @@ variable "lb_container_port" {
   type        = number
   default     = 80
 }
+
+
+###########################################################
+# ドメイン設定
+###########################################################
+variable "domain_name" {
+  description = "ドメイン名"
+  type        = string
+}
