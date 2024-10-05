@@ -370,6 +370,20 @@ resource "aws_ecs_service" "nginx_service" {
 }
 
 ###########################################################
+# ログ設定
+###########################################################
+
+# CloudWatch Log Groupの作成
+resource "aws_cloudwatch_log_group" "log_group" {
+  name              = "/ecs/${var.ecs_task_definition_family}"
+  retention_in_days = 7 # ログの保持期間（日数）。必要に応じて調整してください。
+
+  tags = merge(var.common_tags, {
+    Name = "${var.ecs_task_definition_family}-log-group"
+  })
+}
+
+###########################################################
 # リソースグループ設定
 ###########################################################
 

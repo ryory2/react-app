@@ -165,7 +165,11 @@ variable "container_definitions" {
     environment = optional(list(object({
       name  = string
       value = string
-    })), []) # 環境変数をオプションとして追加。デフォルトは空リスト。
+    })), [])
+    logConfiguration = optional(object({
+      logDriver = string
+      options   = map(string)
+    }), null)
   }))
   default = [
     {
@@ -179,14 +183,30 @@ variable "container_definitions" {
           protocol      = "tcp"
         }
       ]
-      environment = [] # デフォルトでは空リスト
+      environment = []
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/log"
+          "awslogs-region"        = "ap-northeast-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     },
     {
       name         = "sidecar"
       image        = "busybox"
       essential    = false
       portMappings = []
-      environment  = [] # デフォルトでは空リスト
+      environment  = []
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/log"
+          "awslogs-region"        = "ap-northeast-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ]
 }

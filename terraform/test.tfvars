@@ -40,7 +40,7 @@ target_group_name                = "terraform-test-ecs-nginx-tg"    # ターゲ�
 listener_name                    = "terraform-test-listener"        # ALBリスナーの名前を設定
 iam_role_name_ecs_role           = "terraformEcsTaskRole"           # ECSタスク用IAMロールの名前を設定
 iam_role_name_ecs_execution_role = "terraformEcsTaskExecutionRole"  # ECSタスク実行用IAMロールの名前を設定
-ecs_task_definition_family       = "terraform-test-nginx-task"      # ECSタスク定義のファミリー名を設定
+ecs_task_definition_family       = "terraform-test-nginx-family"    # ECSタスク定義のファミリー名を設定
 ecs_cluster_name                 = "terraform-test-ecs-cluster"     # ECSクラスターの名前を設定
 ecs_service_name                 = "terraform-test-nginx-service"   # ECSサービスの名前を設定
 domain_name                      = "impierrot.click"                # ホストゾーンの名前
@@ -81,6 +81,14 @@ container_definitions = [
         value = "value2"    # 別の環境変数の値
       }
     ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = "/ecs/terraform-test-nginx-family"
+        "awslogs-region"        = "ap-northeast-1"
+        "awslogs-stream-prefix" = "ecs"
+      }
+    }
   }
   # 2つ目のコンテナを定義する場合
   # ,
