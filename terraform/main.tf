@@ -190,6 +190,15 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]        # 全世界からのアクセスを許可
   }
 
+  # インバウンドルールの設定
+  ingress {
+    description = "backend"     # ルールの説明
+    from_port   = 8080          # 許可するポート範囲の開始
+    to_port     = 8080          # 許可するポート範囲の終了
+    protocol    = "tcp"         # プロトコルをTCPに設定
+    cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+  }
+
   # アウトバウンドルールの設定
   egress {
     from_port   = 0             # 許可するポート範囲の開始

@@ -90,6 +90,41 @@ container_definitions = [
       }
     }
   }
+  ,
+  {
+    name      = "springboot-container"                                                        # コンテナの名前を設定
+    image     = "990606419933.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-backend:latest" # コンテナイメージを設定
+    essential = true                                                                          # このコンテナが必須かどうかを設定
+    portMappings = [                                                                          # コンテナのポートマッピングを設定
+      {
+        containerPort = 8080  # コンテナ内でリッスンするポート
+        hostPort      = 8080  # ホスト側のポート
+        protocol      = "tcp" # プロトコルをTCPに設定
+      }
+    ]
+    environment = [ # 環境変数を設定
+      {
+        name  = "SPRING_DATASOURCE_USERNAME" # 環境変数の名前
+        value = "admin"                      # 環境変数の値
+      },
+      {
+        name  = "SPRING_DATASOURCE_PASSWORD" # 別の環境変数の名前
+        value = "XUiavro7C49If5uWgvEb"       # 別の環境変数の値
+      },
+      {
+        name  = "SPRING_DATASOURCE_URL"                                                             # 別の環境変数の名前
+        value = "jdbc:mysql://database-1.cdi2jb6zb2yt.ap-northeast-1.rds.amazonaws.com:3306/tododb" # 別の環境変数の値
+      }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = "/ecs/terraform-test-nginx-family"
+        "awslogs-region"        = "ap-northeast-1"
+        "awslogs-stream-prefix" = "ecs"
+      }
+    }
+  }
   # 2つ目のコンテナを定義する場合
   # ,
   # {
