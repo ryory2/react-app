@@ -233,14 +233,109 @@ resource "aws_lb" "alb" {
   })
 }
 
+###########################################################
+# ALBリスナー設定
+###########################################################
+
+# ALBリスナーの作成
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_lb.alb.arn # 作成したALBのARNを指定
+  port              = "80"           # リスナーがリッスンするポート
+  protocol          = "HTTP"         # プロトコルをHTTPに設定
+
+  # デフォルトアクションとしてターゲットグループにフォワード
+  default_action {
+    type             = "forward"                           # アクションタイプをフォワードに設定
+    target_group_arn = aws_lb_target_group.frontend_tg.arn # フォワード先のターゲットグループARNを指定
+  }
+
+  tags = merge(var.common_tags, {
+    Name = var.listener_name
+  })
+}
+
+# # HTTPリスナー（ポート80）でHTTPSにリダイレクト
+# resource "aws_lb_listener" "http" {
+#   load_balancer_arn = aws_lb.app_alb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
+
+#   default_action {
+#     type = "redirect"
+
+#     redirect {
+#       port        = "443"
+#       protocol    = "HTTPS"
+#       status_code = "HTTP_301"
+#     }
+#   }
+# }
+
+# # HTTPSリスナー（ポート443）
+# resource "aws_lb_listener" "https" {
+#   load_balancer_arn = aws_lb.app_alb.arn
+#   port              = "443"
+#   protocol          = "HTTPS"
+#   ssl_policy        = "ELBSecurityPolicy-2016-08"
+#   certificate_arn   = var.acm_certificate_arn
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.frontend_tg.arn
+#   }
+# }
+
+
+###########################################################
+# ALB設定（ルール）
+###########################################################
+# フロントエンド用ターゲットグループへのパスベースルール
+resource "aws_lb_listener_rule" "frontend_rule" {  # フロントエンド用のロードバランサーリスナールールを定義
+  listener_arn = aws_lb_listener.http_listener.arn # HTTPリスナーのARNを指定
+  priority     = 200                               # ルールの優先度を設定（数値が低いほど高優先度）
+
+  action {                                                 # アクションブロックの開始
+    type             = "forward"                           # アクションのタイプを「フォワード」に設定
+    target_group_arn = aws_lb_target_group.frontend_tg.arn # フロントエンドターゲットグループのARNを指定
+  }                                                        # アクションブロックの終了
+
+  condition {         # 条件ブロックの開始
+    path_pattern {    # パスパターン条件を定義
+      values = ["/*"] # パスが「/frontend/」で始まるリクエストを対象
+    }
+  } # 条件ブロックの終了
+}   # フロントエンドルールリソースの終了
+
+# バックエンド用ターゲットグループへのパスベースルール
+resource "aws_lb_listener_rule" "backend_rule" {   # バックエンド用のロードバランサーリスナールールを定義
+  listener_arn = aws_lb_listener.http_listener.arn # HTTPSリスナーのARNを指定
+  priority     = 100                               # ルールの優先度を設定（フロントエンドより低優先度）
+
+  action {                                                # アクションブロックの開始
+    type             = "forward"                          # アクションのタイプを「フォワード」に設定
+    target_group_arn = aws_lb_target_group.backend_tg.arn # バックエンドターゲットグループのARNを指定
+  }                                                       # アクションブロックの終了
+
+  condition {             # 条件ブロックの開始
+    path_pattern {        # パスパターン条件を定義
+      values = ["/api/*"] # パスが「/api/」で始まるリクエストを対象
+    }
+  } # 条件ブロックの終了
+}   # バックエンドルールリソースの終了
+
+
+###########################################################
+# ターゲットグループ設定
+###########################################################
+
 # ターゲットグループの作成
-resource "aws_lb_target_group" "tg" {
+resource "aws_lb_target_group" "frontend_tg" {
   # awsvpc ネットワークモードでは、ターゲットグループの target_type を ip に設定する必要がある（タスク定義で指定されているネットワークモードが awsvpc）
-  name        = var.target_group_name # ターゲットグループの名前
-  port        = 80                    # ターゲットグループがリッスンするポート
-  protocol    = "HTTP"                # プロトコルをHTTPに設定
-  vpc_id      = aws_vpc.vpc.id        # 作成したVPCに関連付け
-  target_type = "ip"                  # ターゲットタイプをIPに設定
+  name        = var.target_group_name_frontend # ターゲットグループの名前
+  port        = 80                             # ターゲットグループがリッスンするポート
+  protocol    = "HTTP"                         # プロトコルをHTTPに設定
+  vpc_id      = aws_vpc.vpc.id                 # 作成したVPCに関連付け
+  target_type = "ip"                           # ターゲットタイプをIPに設定
 
   # ヘルスチェックの設定
   health_check {
@@ -253,31 +348,33 @@ resource "aws_lb_target_group" "tg" {
   }
 
   tags = merge(var.common_tags, {
-    Name = var.target_group_name
+    Name = var.target_group_name_frontend
   })
 }
 
-###########################################################
-# ALBリスナー設定
-###########################################################
+# ターゲットグループの作成
+resource "aws_lb_target_group" "backend_tg" {
+  # awsvpc ネットワークモードでは、ターゲットグループの target_type を ip に設定する必要がある（タスク定義で指定されているネットワークモードが awsvpc）
+  name        = var.target_group_name_backend # ターゲットグループの名前
+  port        = 8080                          # ターゲットグループがリッスンするポート
+  protocol    = "HTTP"                        # プロトコルをHTTPに設定
+  vpc_id      = aws_vpc.vpc.id                # 作成したVPCに関連付け
+  target_type = "ip"                          # ターゲットタイプをIPに設定
 
-# ALBリスナーの作成
-resource "aws_lb_listener" "listener" {
-  load_balancer_arn = aws_lb.alb.arn # 作成したALBのARNを指定
-  port              = "80"           # リスナーがリッスンするポート
-  protocol          = "HTTP"         # プロトコルをHTTPに設定
-
-  # デフォルトアクションとしてターゲットグループにフォワード
-  default_action {
-    type             = "forward"                  # アクションタイプをフォワードに設定
-    target_group_arn = aws_lb_target_group.tg.arn # フォワード先のターゲットグループARNを指定
+  # ヘルスチェックの設定
+  health_check {
+    path                = "/api/health-check" # ヘルスチェックに使用するパス
+    interval            = 30                  # ヘルスチェックの間隔（秒）
+    timeout             = 5                   # ヘルスチェックのタイムアウト（秒）
+    healthy_threshold   = 2                   # ヘルシーと見なす連続成功回数
+    unhealthy_threshold = 2                   # アンヘルシーと見なす連続失敗回数
+    matcher             = "200-299"           # 正常と見なすHTTPステータスコードの範囲
   }
 
   tags = merge(var.common_tags, {
-    Name = var.listener_name
+    Name = var.target_group_name_backend
   })
 }
-
 ###########################################################
 # Route 53ホストゾーンの取得
 ###########################################################
@@ -352,12 +449,12 @@ resource "aws_ecs_task_definition" "nginx_task" {
 
 # ECSサービスの作成
 resource "aws_ecs_service" "nginx_service" {
-  name            = var.ecs_service_name                   # サービスの名前
-  cluster         = aws_ecs_cluster.ecs_cluster.id         # 作成したECSクラスターに関連付け
-  task_definition = aws_ecs_task_definition.nginx_task.arn # 使用するタスク定義のARNを指定
-  desired_count   = 1                                      # 起動するタスクの数
-  launch_type     = "FARGATE"                              # Fargateランチタイプを指定
-  # force_new_deployment = true                                   # デプロイを強制する場合
+  name                 = var.ecs_service_name                   # サービスの名前
+  cluster              = aws_ecs_cluster.ecs_cluster.id         # 作成したECSクラスターに関連付け
+  task_definition      = aws_ecs_task_definition.nginx_task.arn # 使用するタスク定義のARNを指定
+  desired_count        = 1                                      # 起動するタスクの数
+  launch_type          = "FARGATE"                              # Fargateランチタイプを指定
+  force_new_deployment = true                                   # デプロイを強制する場合
 
   # ネットワーク設定
   network_configuration {
@@ -368,9 +465,15 @@ resource "aws_ecs_service" "nginx_service" {
 
   # ロードバランサー設定
   load_balancer {
-    target_group_arn = aws_lb_target_group.tg.arn # 使用するターゲットグループのARNを指定
-    container_name   = var.lb_container_name      # タスク内のコンテナ名を指定
-    container_port   = var.lb_container_port      # コンテナがリッスンするポートを指定
+    target_group_arn = aws_lb_target_group.frontend_tg.arn # 使用するターゲットグループのARNを指定
+    container_name   = var.lb_container_name_frontend      # タスク内のコンテナ名を指定
+    container_port   = var.lb_container_port_frontend      # コンテナがリッスンするポートを指定
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.backend_tg.arn # バックエンドターゲットグループ
+    container_name   = var.lb_container_name_backend
+    container_port   = var.lb_container_port_backend # バックエンドコンテナのポートを指定
   }
 
   tags = merge(var.common_tags, {

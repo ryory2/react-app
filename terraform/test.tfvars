@@ -36,7 +36,8 @@ route_table_name_1               = "terraform-test-public-rt-1"     # 1つ目の
 route_table_name_2               = "terraform-test-public-rt-2"     # 2つ目のルートテーブルの名前を設定
 security_group_name              = "terraform-test-alb-sg"          # セキュリティグループの名前を設定
 alb_name                         = "terraform-test-ecs-nginx-alb"   # ALBの名前を設定
-target_group_name                = "terraform-test-ecs-nginx-tg"    # ターゲットグループの名前を設定
+target_group_name_frontend       = "terraform-test-ecs-frontend-tg" # ターゲットグループの名前を設定
+target_group_name_backend        = "terraform-test-ecs-backend-tg"  # ターゲットグループの名前を設定
 listener_name                    = "terraform-test-listener"        # ALBリスナーの名前を設定
 iam_role_name_ecs_role           = "terraformEcsTaskRole"           # ECSタスク用IAMロールの名前を設定
 iam_role_name_ecs_execution_role = "terraformEcsTaskExecutionRole"  # ECSタスク実行用IAMロールの名前を設定
@@ -61,7 +62,7 @@ resource_group_tags = {          # リソースグループに含めるタグの
 
 container_definitions = [
   {
-    name      = "react-frontend"                                                          # コンテナの名前を設定
+    name      = "frontend-container"                                                      # コンテナの名前を設定
     image     = "990606419933.dkr.ecr.ap-northeast-1.amazonaws.com/react-frontend:latest" # コンテナイメージを設定
     essential = true                                                                      # このコンテナが必須かどうかを設定
     portMappings = [                                                                      # コンテナのポートマッピングを設定
@@ -92,7 +93,7 @@ container_definitions = [
   }
   ,
   {
-    name      = "springboot-container"                                                        # コンテナの名前を設定
+    name      = "backend-container"                                                           # コンテナの名前を設定
     image     = "990606419933.dkr.ecr.ap-northeast-1.amazonaws.com/springboot-backend:latest" # コンテナイメージを設定
     essential = true                                                                          # このコンテナが必須かどうかを設定
     portMappings = [                                                                          # コンテナのポートマッピングを設定
@@ -140,5 +141,7 @@ container_definitions = [
 # ロードバランサー設定
 ###########################################################
 
-lb_container_name = "react-frontend" # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
-lb_container_port = 80               # ロードバランサーで使用するコンテナのポート
+lb_container_name_frontend = "frontend-container" # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
+lb_container_port_frontend = 80                   # ロードバランサーで使用するコンテナのポート
+lb_container_name_backend  = "backend-container"  # ロードバランサーで使用するコンテナの名前（container_definitions.nameと同じにすること）
+lb_container_port_backend  = 8080                 # ロードバランサーで使用するコンテナのポート

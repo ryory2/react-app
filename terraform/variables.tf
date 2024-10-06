@@ -87,7 +87,13 @@ variable "listener_name" {
   default     = "listener"
 }
 
-variable "target_group_name" {
+variable "target_group_name_frontend" {
+  description = "ターゲットグループの名前"
+  type        = string
+  default     = "ecs-nginx-tg"
+}
+
+variable "target_group_name_backend" {
   description = "ターゲットグループの名前"
   type        = string
   default     = "ecs-nginx-tg"
@@ -215,15 +221,31 @@ variable "container_definitions" {
 # ロードバランサー設定
 ###########################################################
 
+# フロントエンド
 # ロードバランサー用のコンテナ名
-variable "lb_container_name" {
+variable "lb_container_name_frontend" {
   description = "Load Balancerで使用するコンテナの名前"
   type        = string
   default     = "nginx"
 }
 
 # ロードバランサー用のコンテナポート
-variable "lb_container_port" {
+variable "lb_container_port_frontend" {
+  description = "Load Balancerで使用するコンテナのポート"
+  type        = number
+  default     = 80
+}
+
+# バックエンド
+# ロードバランサー用のコンテナ名
+variable "lb_container_name_backend" {
+  description = "Load Balancerで使用するコンテナの名前"
+  type        = string
+  default     = "nginx"
+}
+
+# ロードバランサー用のコンテナポート
+variable "lb_container_port_backend" {
   description = "Load Balancerで使用するコンテナのポート"
   type        = number
   default     = 80
