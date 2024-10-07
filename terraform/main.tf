@@ -199,6 +199,15 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
   }
 
+  # インバウンドルールの設定
+  ingress {
+    description = "https"       # ルールの説明
+    from_port   = 443           # 許可するポート範囲の開始
+    to_port     = 443           # 許可するポート範囲の終了
+    protocol    = "tcp"         # プロトコルをTCPに設定
+    cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+  }
+
   # アウトバウンドルールの設定
   egress {
     from_port   = 0             # 許可するポート範囲の開始
@@ -210,6 +219,26 @@ resource "aws_security_group" "alb_sg" {
   tags = merge(var.common_tags, {
     Name = var.security_group_name
   })
+}
+
+###########################################################
+# 署名書の取得
+###########################################################
+
+# 既存のACM証明書を取得
+data "aws_acm_certificate" "certificate" {
+  domain      = var.domain_name # 証明書のドメイン名
+  statuses    = ["ISSUED"]      # 証明書のステータス
+  most_recent = true            # 最新の証明書を取得
+
+  # サブドメインがある場合は、subject_alternative_namesで指定
+  # subject_alternative_names = ["www.example.com"]
+
+  lifecycle {
+    # ドメインの末尾にドットを付けない
+    # nameの指定方法に注意
+    # DNS検証の場合、証明書のステータスが "ISSUED" であることを確認
+  }
 }
 
 ###########################################################
@@ -271,19 +300,24 @@ resource "aws_lb_listener" "http_listener" {
 #   }
 # }
 
-# # HTTPSリスナー（ポート443）
-# resource "aws_lb_listener" "https" {
-#   load_balancer_arn = aws_lb.app_alb.arn
-#   port              = "443"
-#   protocol          = "HTTPS"
-#   ssl_policy        = "ELBSecurityPolicy-2016-08"
-#   certificate_arn   = var.acm_certificate_arn
+resource "aws_lb_listener" "https_listener" {
+  load_balancer_arn = aws_lb.alb.arn              # 既存のALBのARN
+  port              = "443"                       # HTTPSポート
+  protocol          = "HTTPS"                     # プロトコル
+  ssl_policy        = "ELBSecurityPolicy-2016-08" # SSLポリシー
 
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.frontend_tg.arn
-#   }
-# }
+  certificate_arn = data.aws_acm_certificate.certificate.arn # 取得した証明書のARN
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend_tg.arn # 既存のターゲットグループのARN
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "HTTPS-Listener"
+  })
+}
+
 
 
 ###########################################################
