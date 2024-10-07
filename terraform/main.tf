@@ -419,8 +419,8 @@ resource "aws_lb_listener" "https_listener" {
   ssl_policy        = "ELBSecurityPolicy-2016-08" # SSLポリシー
   depends_on        = [aws_lb_target_group.frontend_tg, aws_lb_target_group.backend_tg]
 
-  # certificate_arn = data.aws_acm_certificate.certificate.arn # 取得した証明書のARN
-  certificate_arn = var.acm_certificate_arn # 取得した証明書のARN
+  certificate_arn = data.aws_acm_certificate.certificate.arn # 取得した証明書のARN
+  # certificate_arn = var.acm_certificate_arn # 取得した証明書のARN
 
   default_action {
     type             = "forward"
@@ -569,18 +569,18 @@ resource "aws_lb_target_group" "backend_tg" {
 #   tags = var.common_tags
 # }
 
-# # ドメイン名でホストゾーンを検索
-# data "aws_route53_zone" "route53_zone" {
-#   name         = var.domain_name # 管理したいドメイン名を入力（末尾にドットを付ける）
-#   private_zone = false           # パブリックホストゾーンの場合はfalse、プライベートの場合はtrue
-# }
+# ドメイン名でホストゾーンを検索
+data "aws_route53_zone" "route53_zone" {
+  name         = var.domain_name # 管理したいドメイン名を入力（末尾にドットを付ける）
+  private_zone = false           # パブリックホストゾーンの場合はfalse、プライベートの場合はtrue
+}
 
 # Aレコードを作成し、ALBへのエイリアスとして設定
 resource "aws_route53_record" "route53_record" {
-  # zone_id = data.aws_route53_zone.route53_zone.zone_id # 取得したホストゾーンIDを指定
-  zone_id = var.route53_zone_id # 取得したホストゾーンIDを指定
-  name    = var.domain_name     # Aレコードの名前を変数から指定
-  type    = "A"                 # レコードタイプをAに設定
+  zone_id = data.aws_route53_zone.route53_zone.zone_id # 取得したホストゾーンIDを指定
+  # zone_id = var.route53_zone_id # 取得したホストゾーンIDを指定
+  name = var.domain_name # Aレコードの名前を変数から指定
+  type = "A"             # レコードタイプをAに設定
 
   alias {
     name    = aws_lb.alb.dns_name # ALBのDNS名をエイリアス先として指定
