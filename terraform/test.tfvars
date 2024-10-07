@@ -34,7 +34,9 @@ availability_zone_1              = "ap-northeast-1a"                # 使用す�
 availability_zone_2              = "ap-northeast-1c"                # 使用する2つ目のアベイラビリティゾーンを設定
 route_table_name_1               = "terraform-test-public-rt-1"     # 1つ目のルートテーブルの名前を設定
 route_table_name_2               = "terraform-test-public-rt-2"     # 2つ目のルートテーブルの名前を設定
-security_group_name              = "terraform-test-alb-sg"          # セキュリティグループの名前を設定
+security_group_name_alb          = "terraform-test-alb-sg"          # セキュリティグループ（alb）の名前を設定
+security_group_name_backend      = "terraform-test-backend-sg"      # セキュリティグループ（backend）の名前を設定
+security_group_name_frontend     = "terraform-test-frontend-sg"     # セキュリティグループ（frontend）の名前を設定
 alb_name                         = "terraform-test-ecs-nginx-alb"   # ALBの名前を設定
 target_group_name_frontend       = "terraform-test-ecs-frontend-tg" # ターゲットグループの名前を設定
 target_group_name_backend        = "terraform-test-ecs-backend-tg"  # ターゲットグループの名前を設定
@@ -45,6 +47,9 @@ ecs_task_definition_family       = "terraform-test-nginx-family"    # ECSタス�
 ecs_cluster_name                 = "terraform-test-ecs-cluster"     # ECSクラスターの名前を設定
 ecs_service_name                 = "terraform-test-nginx-service"   # ECSサービスの名前を設定
 domain_name                      = "impierrot.click"                # ホストゾーンの名前
+acm_certificate_arn              = "arn:aws:acm:ap-northeast-1:990606419933:certificate/25144a76-2e9b-4b86-a32f-ebcbb330d81f"
+route53_zone_id                  = "Z06442292XEXGMHMQLXK9" # 実際のホストゾーンIDに置き換えてください
+
 
 ###########################################################
 # リソースグループ設定

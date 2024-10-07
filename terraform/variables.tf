@@ -99,8 +99,20 @@ variable "target_group_name_backend" {
   default     = "ecs-nginx-tg"
 }
 
-variable "security_group_name" {
-  description = "セキュリティグループの名前"
+variable "security_group_name_alb" {
+  description = "セキュリティグループ（ALB）の名前"
+  type        = string
+  default     = "alb-sg"
+}
+
+variable "security_group_name_backend" {
+  description = "セキュリティグループ（バックエンド）の名前"
+  type        = string
+  default     = "alb-sg"
+}
+
+variable "security_group_name_frontend" {
+  description = "セキュリティグループ（フロントエンド）の名前"
   type        = string
   default     = "alb-sg"
 }
@@ -257,5 +269,15 @@ variable "lb_container_port_backend" {
 ###########################################################
 variable "domain_name" {
   description = "ドメイン名"
+  type        = string
+}
+
+variable "acm_certificate_arn" {
+  description = "ARN of the existing ACM certificate"
+  type        = string
+}
+
+variable "route53_zone_id" {
+  description = "ID of the existing Route 53 Hosted Zone"
   type        = string
 }

@@ -177,13 +177,13 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 
 # セキュリティグループの作成（ALB用）
 resource "aws_security_group" "alb_sg" {
-  name        = var.security_group_name      # セキュリティグループの名前
+  name        = var.security_group_name_alb  # セキュリティグループの名前
   description = "Allow HTTP inbound traffic" # 説明
   vpc_id      = aws_vpc.vpc.id               # 作成したVPCに関連付け
 
   # インバウンドルールの設定
   ingress {
-    description = "HTTP from anywhere" # ルールの説明
+    description = "HTTP from anywhere" # ルールの説明（SG→ALBの順でリクエストが処理されるが、80も許可しないとALBまでたどり着かずリダイレクトがされないため許可）
     from_port   = 80                   # 許可するポート範囲の開始
     to_port     = 80                   # 許可するポート範囲の終了
     protocol    = "tcp"                # プロトコルをTCPに設定
@@ -192,7 +192,7 @@ resource "aws_security_group" "alb_sg" {
 
   # インバウンドルールの設定
   ingress {
-    description = "backend"     # ルールの説明
+    description = "backend"     # ルールの説明（8080については許可せず、ALBが/api/*の場合に8080へルーティングする）
     from_port   = 8080          # 許可するポート範囲の開始
     to_port     = 8080          # 許可するポート範囲の終了
     protocol    = "tcp"         # プロトコルをTCPに設定
@@ -217,9 +217,121 @@ resource "aws_security_group" "alb_sg" {
   }
 
   tags = merge(var.common_tags, {
-    Name = var.security_group_name
+    Name = var.security_group_name_alb
   })
 }
+
+# # セキュリティグループの作成（バックエンド用）
+# resource "aws_security_group" "backend_sg" {
+#   name        = var.security_group_name_backend # セキュリティグループの名前
+#   description = "Allow HTTP inbound traffic"    # 説明
+#   vpc_id      = aws_vpc.vpc.id                  # 作成したVPCに関連付け
+
+#   # # インバウンドルールの設定
+#   # ingress {
+#   #   description = "backend" # ルールの説明
+#   #   from_port   = 8080      # 許可するポート範囲の開始
+#   #   to_port     = 8080      # 許可するポート範囲の終了
+#   #   protocol    = "tcp"     # プロトコルをTCPに設定
+#   #   # cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   #   security_groups = [aws_security_group.alb_sg.id] # ALBのSGからのトラフィックのみ許可
+#   # }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 443           # 許可するポート範囲の開始
+#     to_port     = 443           # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 8080          # 許可するポート範囲の開始
+#     to_port     = 8080          # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 80            # 許可するポート範囲の開始
+#     to_port     = 80            # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # アウトバウンドルールの設定
+#   egress {
+#     from_port   = 0             # 許可するポート範囲の開始
+#     to_port     = 0             # 許可するポート範囲の終了
+#     protocol    = "-1"          # 全てのプロトコルを許可
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界へのアクセスを許可
+#   }
+
+#   tags = merge(var.common_tags, {
+#     Name = var.security_group_name_backend
+#   })
+# }
+
+# # セキュリティグループの作成（フロントエンド用）
+# resource "aws_security_group" "frontend_sg" {
+#   name        = var.security_group_name_frontend # セキュリティグループの名前
+#   description = "Allow HTTP inbound traffic"     # 説明
+#   vpc_id      = aws_vpc.vpc.id                   # 作成したVPCに関連付け
+
+#   # # インバウンドルールの設定
+#   # ingress {
+#   #   description = "frontend" # ルールの説明
+#   #   from_port   = 80         # 許可するポート範囲の開始
+#   #   to_port     = 80         # 許可するポート範囲の終了
+#   #   protocol    = "tcp"      # プロトコルをTCPに設定
+#   #   # cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   #   security_groups = [aws_security_group.alb_sg.id] # ALBのSGからのトラフィックのみ許可
+#   # }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 443           # 許可するポート範囲の開始
+#     to_port     = 443           # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 8080          # 許可するポート範囲の開始
+#     to_port     = 8080          # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # インバウンドルールの設定
+#   ingress {
+#     description = "https"       # ルールの説明
+#     from_port   = 80            # 許可するポート範囲の開始
+#     to_port     = 80            # 許可するポート範囲の終了
+#     protocol    = "tcp"         # プロトコルをTCPに設定
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界からのアクセスを許可
+#   }
+
+#   # アウトバウンドルールの設定
+#   egress {
+#     from_port   = 0             # 許可するポート範囲の開始
+#     to_port     = 0             # 許可するポート範囲の終了
+#     protocol    = "-1"          # 全てのプロトコルを許可
+#     cidr_blocks = ["0.0.0.0/0"] # 全世界へのアクセスを許可
+#   }
+
+#   tags = merge(var.common_tags, {
+#     Name = var.security_group_name_frontend
+#   })
+# }
 
 ###########################################################
 # 署名書の取得
@@ -266,47 +378,49 @@ resource "aws_lb" "alb" {
 # ALBリスナー設定
 ###########################################################
 
-# ALBリスナーの作成
-resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.alb.arn # 作成したALBのARNを指定
-  port              = "80"           # リスナーがリッスンするポート
-  protocol          = "HTTP"         # プロトコルをHTTPに設定
+# ALBリスナーの作成（ポート80へのリクエストは許可しない）
+# resource "aws_lb_listener" "http_listener" {
+#   load_balancer_arn = aws_lb.alb.arn # 作成したALBのARNを指定
+#   port              = "80"           # リスナーがリッスンするポート
+#   protocol          = "HTTP"         # プロトコルをHTTPに設定
 
-  # デフォルトアクションとしてターゲットグループにフォワード
-  default_action {
-    type             = "forward"                           # アクションタイプをフォワードに設定
-    target_group_arn = aws_lb_target_group.frontend_tg.arn # フォワード先のターゲットグループARNを指定
-  }
-
-  tags = merge(var.common_tags, {
-    Name = var.listener_name
-  })
-}
-
-# # HTTPリスナー（ポート80）でHTTPSにリダイレクト
-# resource "aws_lb_listener" "http" {
-#   load_balancer_arn = aws_lb.app_alb.arn
-#   port              = "80"
-#   protocol          = "HTTP"
-
+#   # デフォルトアクションとしてターゲットグループにフォワード
 #   default_action {
-#     type = "redirect"
-
-#     redirect {
-#       port        = "443"
-#       protocol    = "HTTPS"
-#       status_code = "HTTP_301"
-#     }
+#     type             = "forward"                           # アクションタイプをフォワードに設定
+#     target_group_arn = aws_lb_target_group.frontend_tg.arn # フォワード先のターゲットグループARNを指定
 #   }
+
+#   tags = merge(var.common_tags, {
+#     Name = var.listener_name
+#   })
 # }
+
+# HTTPリスナー（ポート80）でHTTPSにリダイレクト
+resource "aws_lb_listener" "http_redirect_to_https_listener" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
 
 resource "aws_lb_listener" "https_listener" {
   load_balancer_arn = aws_lb.alb.arn              # 既存のALBのARN
   port              = "443"                       # HTTPSポート
   protocol          = "HTTPS"                     # プロトコル
   ssl_policy        = "ELBSecurityPolicy-2016-08" # SSLポリシー
+  depends_on        = [aws_lb_target_group.frontend_tg, aws_lb_target_group.backend_tg]
 
-  certificate_arn = data.aws_acm_certificate.certificate.arn # 取得した証明書のARN
+  # certificate_arn = data.aws_acm_certificate.certificate.arn # 取得した証明書のARN
+  certificate_arn = var.acm_certificate_arn # 取得した証明書のARN
 
   default_action {
     type             = "forward"
@@ -324,9 +438,9 @@ resource "aws_lb_listener" "https_listener" {
 # ALB設定（ルール）
 ###########################################################
 # フロントエンド用ターゲットグループへのパスベースルール
-resource "aws_lb_listener_rule" "frontend_rule" {  # フロントエンド用のロードバランサーリスナールールを定義
-  listener_arn = aws_lb_listener.http_listener.arn # HTTPリスナーのARNを指定
-  priority     = 200                               # ルールの優先度を設定（数値が低いほど高優先度）
+resource "aws_lb_listener_rule" "frontend_rule" {   # フロントエンド用のロードバランサーリスナールールを定義
+  listener_arn = aws_lb_listener.https_listener.arn # HTTPリスナーのARNを指定
+  priority     = 200                                # ルールの優先度を設定（数値が低いほど高優先度）
 
   action {                                                 # アクションブロックの開始
     type             = "forward"                           # アクションのタイプを「フォワード」に設定
@@ -341,9 +455,9 @@ resource "aws_lb_listener_rule" "frontend_rule" {  # フロントエンド用の
 }   # フロントエンドルールリソースの終了
 
 # バックエンド用ターゲットグループへのパスベースルール
-resource "aws_lb_listener_rule" "backend_rule" {   # バックエンド用のロードバランサーリスナールールを定義
-  listener_arn = aws_lb_listener.http_listener.arn # HTTPSリスナーのARNを指定
-  priority     = 100                               # ルールの優先度を設定（フロントエンドより低優先度）
+resource "aws_lb_listener_rule" "backend_rule" {    # バックエンド用のロードバランサーリスナールールを定義
+  listener_arn = aws_lb_listener.https_listener.arn # HTTPSリスナーのARNを指定
+  priority     = 100                                # ルールの優先度を設定（フロントエンドより低優先度）
 
   action {                                                # アクションブロックの開始
     type             = "forward"                          # アクションのタイプを「フォワード」に設定
@@ -455,17 +569,18 @@ resource "aws_lb_target_group" "backend_tg" {
 #   tags = var.common_tags
 # }
 
-# ドメイン名でホストゾーンを検索
-data "aws_route53_zone" "route53_zone" {
-  name         = var.domain_name # 管理したいドメイン名を入力（末尾にドットを付ける）
-  private_zone = false           # パブリックホストゾーンの場合はfalse、プライベートの場合はtrue
-}
+# # ドメイン名でホストゾーンを検索
+# data "aws_route53_zone" "route53_zone" {
+#   name         = var.domain_name # 管理したいドメイン名を入力（末尾にドットを付ける）
+#   private_zone = false           # パブリックホストゾーンの場合はfalse、プライベートの場合はtrue
+# }
 
 # Aレコードを作成し、ALBへのエイリアスとして設定
 resource "aws_route53_record" "route53_record" {
-  zone_id = data.aws_route53_zone.route53_zone.zone_id # 取得したホストゾーンIDを指定
-  name    = var.domain_name                            # Aレコードの名前を変数から指定
-  type    = "A"                                        # レコードタイプをAに設定
+  # zone_id = data.aws_route53_zone.route53_zone.zone_id # 取得したホストゾーンIDを指定
+  zone_id = var.route53_zone_id # 取得したホストゾーンIDを指定
+  name    = var.domain_name     # Aレコードの名前を変数から指定
+  type    = "A"                 # レコードタイプをAに設定
 
   alias {
     name    = aws_lb.alb.dns_name # ALBのDNS名をエイリアス先として指定
@@ -516,6 +631,10 @@ resource "aws_ecs_service" "nginx_service" {
     subnets          = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id] # サービスを配置するサブネット
     security_groups  = [aws_security_group.alb_sg.id]                   # セキュリティグループを指定
     assign_public_ip = true                                             # パブリックIPを割り当て
+    # security_groups = [                                        # セキュリティグループを指定
+    #   aws_security_group.frontend_sg.id,
+    #   aws_security_group.backend_sg.id
+    # ]
   }
 
   # ロードバランサー設定
